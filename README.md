@@ -19,11 +19,25 @@
 
 ---
 
-## ステップ 1：VS Code でワークスペースを開く
+## ステップ 1：リポジトリをクローンして VS Code で開く
 
-1. VS Code を起動します
-2. 「ファイル」→「フォルダーを開く」からこのフォルダを選択します
-3. ターミナルを開きます（`Ctrl + @` / Mac: `` Ctrl + ` ``）
+1. ターミナル（Windows: PowerShell、Mac: Terminal.app）を開きます
+2. 好きな場所に移動して、以下のコマンドを実行します：
+
+   ```bash
+   git clone https://github.com/TsuyoshiUshio/buka-samples.git
+   ```
+
+3. クローンしたフォルダから VS Code を開きます：
+
+   ```bash
+   code buka-samples
+   ```
+
+4. VS Code が開いたら、ターミナルを開きます（`Ctrl + @` / Mac: `` Ctrl + ` ``）
+
+> 💡 `git` コマンドが見つからない場合は、先に [Git](https://git-scm.com/) をインストールしてください。
+> `code` コマンドが見つからない場合は、VS Code を起動して `Ctrl+Shift+P`（Mac: `Cmd+Shift+P`）→「Shell Command: Install 'code' command in PATH」を実行してください。
 
 ---
 
