@@ -182,14 +182,21 @@ todo/
 
 ---
 
-## 付録：Claude Code で使う場合
+## 付録：他の AI コーディングエージェントで使う場合
 
-このワークスペースは GitHub Copilot（VS Code）向けに構成されていますが、Claude Code でも利用できます。
-クローンした後、Claude Code のチャットで以下のように伝えてください：
+このワークスペースは GitHub Copilot（VS Code）向けに構成されていますが、他の AI コーディングエージェントでも利用できます。
+クローンした後、各エージェントのチャットで以下のように伝えてください：
 
 ```text
 このフォルダに、GitHub Copilot 用の instructions/skills/prompt(slash command)/AGENTS.md
-があります。これらを Claude Code で使えるようにコンバートしてください。
+があります。これらをあなたの環境で使えるようにコンバートしてください。
 ```
 
-Claude Code が `.github/` 配下のファイルを読み取り、`.claude/` 形式（`CLAUDE.md`、`.claude/commands/`、`.claude/skills/` など）に変換してくれます。
+各エージェントが `.github/` 配下のファイルを読み取り、自分の形式に変換してくれます。例：
+
+| エージェント | 変換先の例 |
+| --- | --- |
+| **Claude Code** | `CLAUDE.md`、`.claude/commands/`、`.claude/skills/` |
+| **Cursor** | `.cursor/rules/`、`.cursorrules` |
+| **Windsurf** | `.windsurfrules` |
+| **その他** | 各エージェントに聞けば、適切な形式に変換してくれます |
