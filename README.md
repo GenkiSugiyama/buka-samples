@@ -179,3 +179,17 @@ todo/
 ---
 
 楽しんでください！ 🎉
+
+---
+
+## 付録：Claude Code で使う場合
+
+このワークスペースは GitHub Copilot（VS Code）向けに構成されていますが、Claude Code でも利用できます。
+クローンした後、Claude Code のチャットで以下のように伝えてください：
+
+```text
+このフォルダに、GitHub Copilot 用の instructions/skills/prompt(slash command)/AGENTS.md
+があります。これらを Claude Code で使えるようにコンバートしてください。
+```
+
+Claude Code が `.github/` 配下のファイルを読み取り、`.claude/` 形式（`CLAUDE.md`、`.claude/commands/`、`.claude/skills/` など）に変換してくれます。
