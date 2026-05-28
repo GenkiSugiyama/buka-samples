@@ -45,7 +45,14 @@ Explain the three levels:
 | **Bypass Approvals** | All tool operations are auto-approved. No confirmation dialogs |
 | **Autopilot** (Preview) | All auto-approved + auto-responds to questions. Fully autonomous |
 
-Recommend **"Bypass Approvals"** for this experience. Explain that Autopilot would answer questions automatically without letting the user participate in the conversation, which is not ideal for a learning experience.
+Recommend **"Bypass Approvals"** for this guided learning experience, but explain the safety trade-off before the user changes it:
+
+- With Bypass Approvals, Copilot can run terminal commands and edit files without asking for confirmation each time.
+- Use it only in this trusted learning workspace, and only while the user is comfortable accepting responsibility for those actions.
+- The user should keep an eye on the chat and terminal output, and should never paste secrets or credentials into the chat.
+- When setup or the learning session is finished, tell the user to switch back to **Default Approvals**.
+
+Do **not** recommend Autopilot for this experience. Autopilot would answer questions automatically without letting the user participate in the conversation, which is not ideal for a learning experience.
 
 Tell the user to look for the permission picker near the chat input area, close to the "Agent" dropdown.
 
@@ -207,45 +214,60 @@ Once the user tells you where the file is, move it to `~/.todo-app/credentials.j
 
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.todo-app"
-Copy-Item "<user-provided-path>" "$env:USERPROFILE\.todo-app\credentials.json"
+Move-Item -LiteralPath "<user-provided-path>" -Destination "$env:USERPROFILE\.todo-app\credentials.json" -Force
 ```
 
 **macOS/Linux**:
 
 ```bash
 mkdir -p ~/.todo-app
-cp "<user-provided-path>" ~/.todo-app/credentials.json
+mv "<user-provided-path>" ~/.todo-app/credentials.json
 ```
 
-**IMPORTANT**: Do NOT read or display the contents of the credentials file. Just move it.
+**IMPORTANT**: Do NOT read or display the contents of the credentials file. Move it out of the workspace so the downloaded copy is not accidentally committed.
 
-After copying, confirm to the user:
+After moving, confirm to the user:
 
 > ✅ Credentials have been saved to `~/.todo-app/credentials.json`.
 > This is outside your project folder, so it will never be sent to the AI or committed to Git.
 
 ### Phase 3 — Project Initialization
 
-#### Step 11 — Initialize the project (if package.json does not exist)
+#### Step 11 — Initialize the TypeScript project tooling
 
-After all tools are present and credentials are configured, if `package.json` does not yet exist, offer to initialize the project:
+After all tools are present and credentials are configured, initialize the minimal project tooling:
 
 ```bash
-npm init -y
+node .github/skills/setup/scripts/initialize-project.mjs
 ```
 
-Then offer to install the recommended dev dependencies:
+This script creates or updates:
+
+- `package.json` with `build`, `test`, `lint`, `lint:fix`, and `format` scripts
+- `tsconfig.json` for strict TypeScript on Node.js ES Modules
+- `eslint.config.js` with TypeScript ESLint and `eslint-plugin-security`
+- `vitest.config.ts`
+- `.prettierrc.json` and `.prettierignore`
+- `src/index.ts`, `src/domain/`, and `src/services/` starter locations
+
+Then install the recommended dependencies:
 
 ```bash
-npm install --save-dev typescript vitest eslint eslint-plugin-security prettier @types/node
+npm install --save-dev typescript vitest eslint @eslint/js typescript-eslint eslint-plugin-security prettier @types/node
 npm install googleapis
 ```
 
-And create a basic `tsconfig.json` if it does not exist.
+Do not skip this step. The later development workflow expects `npm run build`, `npm test`, `npm run lint`, `npm run lint:fix`, and `npm run format` to work.
 
 #### Step 12 — Final verification
 
-Run the prerequisite check script one more time to confirm all tools are present, and verify `~/.todo-app/credentials.json` exists.
+Run the prerequisite check script one more time to confirm all tools are present, verify `~/.todo-app/credentials.json` exists, and verify the generated project tooling:
+
+```bash
+npm run build
+npm test
+npm run lint
+```
 
 Present a final summary:
 
@@ -255,7 +277,8 @@ Present a final summary:
 ✅ Git v2.44.0
 ✅ GitHub CLI v2.50.0
 ✅ Google API credentials configured
-✅ Project initialized
+✅ TypeScript project tooling initialized
+✅ Build, test, and lint commands verified
 
 You're all set! Try /plan-checklist to start planning, or /dev-tdd to start building.
 ```

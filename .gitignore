@@ -20,5 +20,14 @@ coverage/
 *.log
 npm-debug.log*
 
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+credentials.json
+token.json
+client_secret*.json
+.todo-app/
+
 # Checklist working files (generated per task, root only)
 /checklist-*.md
