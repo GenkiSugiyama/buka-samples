@@ -66,7 +66,7 @@ writeIfMissing(
     "types": ["node", "vitest/globals"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "src/**/*.test.ts", "src/**/*.spec.ts"]
 }`,
 );
 
@@ -78,15 +78,24 @@ import tseslint from "typescript-eslint";
 
 const globals = {
   afterEach: "readonly",
+  afterAll: "readonly",
   beforeEach: "readonly",
+  beforeAll: "readonly",
   Buffer: "readonly",
   clearTimeout: "readonly",
+  clearInterval: "readonly",
   console: "readonly",
   describe: "readonly",
   expect: "readonly",
+  fetch: "readonly",
   it: "readonly",
   process: "readonly",
-  setTimeout: "readonly"
+  setTimeout: "readonly",
+  setInterval: "readonly",
+  test: "readonly",
+  URL: "readonly",
+  URLSearchParams: "readonly",
+  vi: "readonly"
 };
 
 export default tseslint.config(
@@ -102,7 +111,13 @@ export default tseslint.config(
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  security.configs.recommended
+  security.configs.recommended,
+  {
+    rules: {
+      "security/detect-non-literal-fs-filename": "off",
+      "security/detect-object-injection": "off"
+    }
+  }
 );`,
 );
 

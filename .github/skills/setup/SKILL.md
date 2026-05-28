@@ -208,20 +208,28 @@ Wait for the user to provide the file path.
 
 #### Step 10 — Place credentials in the safe location
 
-Once the user tells you where the file is, move it to `~/.todo-app/credentials.json`:
+Once the user tells you where the file is, move it to `~/.todo-app/credentials.json`.
+
+Before running the move command, normalize the user's answer to an absolute path:
+
+- If the user provides only a filename, look for that file in their Downloads folder.
+- If the user provides a relative path, resolve it from the current directory.
+- Do not use wildcards, and do not read or display the file contents.
 
 **Windows**:
 
 ```powershell
+$sourcePath = (Resolve-Path -LiteralPath "<absolute-path-to-downloaded-json>").Path
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.todo-app"
-Move-Item -LiteralPath "<user-provided-path>" -Destination "$env:USERPROFILE\.todo-app\credentials.json" -Force
+Move-Item -LiteralPath $sourcePath -Destination "$env:USERPROFILE\.todo-app\credentials.json" -Force
 ```
 
 **macOS/Linux**:
 
 ```bash
+source_path="<absolute-path-to-downloaded-json>"
 mkdir -p ~/.todo-app
-mv "<user-provided-path>" ~/.todo-app/credentials.json
+mv "$source_path" ~/.todo-app/credentials.json
 ```
 
 **IMPORTANT**: Do NOT read or display the contents of the credentials file. Move it out of the workspace so the downloaded copy is not accidentally committed.
@@ -235,20 +243,11 @@ After moving, confirm to the user:
 
 #### Step 11 — Initialize the TypeScript project tooling
 
-After all tools are present and credentials are configured, initialize the minimal project tooling:
+After all tools are present and credentials are configured, make sure `package.json` exists. If it does not exist yet, create it:
 
 ```bash
-node .github/skills/setup/scripts/initialize-project.mjs
+npm init -y
 ```
-
-This script creates or updates:
-
-- `package.json` with `build`, `test`, `lint`, `lint:fix`, and `format` scripts
-- `tsconfig.json` for strict TypeScript on Node.js ES Modules
-- `eslint.config.js` with TypeScript ESLint and `eslint-plugin-security`
-- `vitest.config.ts`
-- `.prettierrc.json` and `.prettierignore`
-- `src/index.ts`, `src/domain/`, and `src/services/` starter locations
 
 Then install the recommended dependencies:
 
@@ -256,6 +255,21 @@ Then install the recommended dependencies:
 npm install --save-dev typescript vitest eslint @eslint/js typescript-eslint eslint-plugin-security prettier @types/node
 npm install googleapis
 ```
+
+Then initialize the minimal project tooling:
+
+```bash
+node .github/skills/setup/scripts/initialize-project.mjs
+```
+
+This creates or updates:
+
+- `package.json` with `build`, `test`, `lint`, `lint:fix`, and `format` scripts
+- `tsconfig.json` for strict TypeScript on Node.js ES Modules
+- `eslint.config.js` with TypeScript ESLint and `eslint-plugin-security`
+- `vitest.config.ts`
+- `.prettierrc.json` and `.prettierignore`
+- `src/index.ts`, `src/domain/`, and `src/services/` starter locations
 
 Do not skip this step. The later development workflow expects `npm run build`, `npm test`, `npm run lint`, `npm run lint:fix`, and `npm run format` to work.
 
