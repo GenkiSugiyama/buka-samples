@@ -21,17 +21,10 @@ const writeIfMissing = (relativePath, content) => {
 const packagePath = join(cwd, "package.json");
 
 if (!existsSync(packagePath)) {
-  if (process.platform === "win32") {
-    execFileSync(process.env.ComSpec ?? "cmd.exe", ["/d", "/s", "/c", "npm init -y"], {
-      cwd,
-      stdio: "inherit",
-    });
-  } else {
-    execFileSync("npm", ["init", "-y"], {
-      cwd,
-      stdio: "inherit",
-    });
-  }
+  execFileSync("npm", ["init", "-y"], {
+    cwd,
+    stdio: "inherit",
+  });
 }
 
 const packageJson = JSON.parse(readFileSync(packagePath, "utf8"));

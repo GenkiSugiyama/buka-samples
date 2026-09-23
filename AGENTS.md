@@ -25,7 +25,7 @@ The app has not been created yet — participants will build it from scratch wit
 - **Gmail integration**: `googleapis` npm package (Gmail API v1)
 - **Google Calendar integration**: `googleapis` npm package (Calendar API v3)
 - **Authentication**: OAuth 2.0 via Google Cloud Console credentials
-- **Credential storage**: `~/.todo-app/credentials.json` (outside the workspace — never sent to LLM)
+- **Credential storage**: `~/.todo-app/credentials.json` outside the workspace
 - Keep API interaction logic in a dedicated `src/services/` directory
 - Keep business logic (event extraction, parsing) in `src/domain/`
 
@@ -42,15 +42,9 @@ npm run format       # Prettier
 
 ## Development Workflow
 
-### TDD-First
-
-All development MUST follow TDD (Test-Driven Development):
-
-1. Write a failing test first (Red)
-2. Write the minimum code to pass (Green)
-3. Refactor while keeping tests green (Refactor)
-
-See the `/dev-tdd` prompt and [tdd-workflow instructions](.github/instructions/tdd-workflow.instructions.md) for details.
+- Use `$plan-checklist` before a multi-step task to create and maintain a root-level checklist.
+- All production code changes MUST follow TDD. Use `$dev-tdd` for the detailed Red-Green-Refactor workflow.
+- Do not write production behavior without first observing a test fail for the expected reason.
 
 ### Lint on Every Change
 
@@ -80,19 +74,26 @@ Before pushing a PR, complete ALL of the following:
 - Branch naming: `feature/<short-description>`, `fix/<short-description>`
 - Commit messages: Conventional Commits (`feat:`, `fix:`, `test:`, `chore:`)
 - One logical change per commit
-- Use the `/plan-checklist` prompt before starting any task to create a trackable checklist
 
 ## Security
 
 ### Secret Protection
 
-Credentials are stored **outside the workspace** in `~/.todo-app/` to prevent them from being sent to the LLM via editor context.
+Credentials are stored **outside the workspace** in `~/.todo-app/`:
 
-- **NEVER** display, print, or include the contents of `credentials.json` or `token.json` in chat responses, logs, or code output.
-- **NEVER** store secrets inside the workspace. No `.env` files with real values, no hardcoded keys.
-- When the user needs to configure credentials, guide them through the `/setup` skill which handles placement in `~/.todo-app/`.
-- If a secret value accidentally appears in context, immediately warn the user and advise them to rotate the credential.
-- See [security instructions](.github/instructions/security.instructions.md) for full policy.
+```text
+~/.todo-app/
+├── credentials.json
+└── token.json
+```
+
+- **NEVER** read credential file contents into the conversation. Verify only whether the files exist.
+- **NEVER** display secret values in chat responses, terminal output, logs, or code output. This includes API keys, OAuth client secrets, access tokens, and refresh tokens.
+- **NEVER** store secrets inside the workspace. Do not create `.env` files with real values or hardcode secrets.
+- Read credentials at runtime from `~/.todo-app/`; use `$setup` when credentials need to be placed there.
+- Never log `Authorization` headers. Prefer structured logging that excludes sensitive fields.
+- If a secret appears in context or output, immediately warn the user and advise rotation at the source.
+- If a secret was committed to Git, remove it from current files, rotate it, and help purge it from repository history.
 
 ### Dependency Security
 
